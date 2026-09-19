@@ -240,7 +240,7 @@ twelve/
 │
 ├─ vercel.json              Vercel build + API/SPA routing
 ├─ api/
-│  └─ [...path].js          Vercel serverless entry (exports the Express app)
+│  └─ index.js              Vercel serverless entry (exports the Express app)
 │
 ├─ server/                  Express + PostgreSQL backend
 │  ├─ app.js                The Express app (shared by local server + Vercel)

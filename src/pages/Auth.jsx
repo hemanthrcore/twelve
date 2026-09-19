@@ -56,6 +56,7 @@ export default function Auth() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [inviteCode, setInviteCode] = useState('')
   const [show, setShow] = useState(false)
   const [remember, setRemember] = useState(true)
   const [error, setError] = useState('')
@@ -84,7 +85,7 @@ export default function Auth() {
     setBusy(true)
     try {
       const res = isSignup
-        ? await signUp({ name, email, password, remember })
+        ? await signUp({ name, email, password, remember, inviteCode })
         : await signIn({ email, password, remember })
       if (res.ok) finish(res.user)
       else setError(res.error)
@@ -96,7 +97,8 @@ export default function Auth() {
   }
 
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())
-  const canSubmit = emailValid && password.length >= (isSignup ? 8 : 1) && (!isSignup || name.trim().length >= 2)
+  const canSubmit = emailValid && password.length >= (isSignup ? 8 : 1)
+    && (!isSignup || (name.trim().length >= 2 && inviteCode.trim().length > 0))
 
   return (
     <div className="page">
@@ -138,6 +140,16 @@ export default function Auth() {
                   <label className="field-label">Full name</label>
                   <input className="input" placeholder="Your name" value={name} autoComplete="name"
                     onChange={(e) => setName(e.target.value)} />
+                </div>
+              )}
+              {isSignup && (
+                <div>
+                  <label className="field-label">twelve access code</label>
+                  <input className="input" placeholder="Code provided by twelve" value={inviteCode}
+                    autoComplete="off" onChange={(e) => setInviteCode(e.target.value)} />
+                  <span className="text-muted" style={{ fontSize: '0.74rem', marginTop: 6, display: 'inline-block' }}>
+                    twelve is invite-only. Enter the access code you were given to create an account.
+                  </span>
                 </div>
               )}
               <div>

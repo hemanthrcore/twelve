@@ -14,6 +14,17 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || ''
 const googleClient = GOOGLE_CLIENT_ID ? new OAuth2Client(GOOGLE_CLIENT_ID) : null
 
+// Invite-only signup: when SIGNUP_CODE is set, creating an account (email OR a
+// brand-new Google account) requires the caller to supply this exact code.
+// Leave it unset to allow open signups (e.g. local development). Change it any
+// time in the host's env vars — no redeploy needed.
+const SIGNUP_CODE = (process.env.SIGNUP_CODE || '').trim()
+function checkInviteCode(req) {
+  if (!SIGNUP_CODE) return true // gate disabled
+  return String(req.body?.inviteCode || '').trim() === SIGNUP_CODE
+}
+const CODE_ERROR = 'Invalid access code. Please enter the twelve access code you were given.'
+
 // ---- helpers -----------------------------------------------------------
 const now = () => Date.now()
 
@@ -90,6 +101,7 @@ router.post('/signup', async (req, res) => {
     if (name.length < 2) return res.status(400).json({ error: 'Please enter your name.' })
     if (!EMAIL_RE.test(email)) return res.status(400).json({ error: 'Enter a valid email address.' })
     if (password.length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters.' })
+    if (!checkInviteCode(req)) return res.status(403).json({ error: CODE_ERROR })
     if (await getUserByEmail(email)) return res.status(409).json({ error: 'An account with this email already exists.' })
 
     const password_hash = await bcrypt.hash(password, 12)
@@ -151,6 +163,8 @@ router.post('/google', async (req, res) => {
 
     let user = await getUserByEmail(email)
     if (!user) {
+      // Creating a NEW account via Google is also invite-gated.
+      if (!checkInviteCode(req)) return res.status(403).json({ error: CODE_ERROR })
       const t = now()
       user = await insertUser({ name, email, password_hash: null, provider: 'google', avatar, wallet_balance: WALLET_SEED, created_at: t, last_login_at: t })
     } else {

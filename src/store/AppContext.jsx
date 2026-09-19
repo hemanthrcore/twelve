@@ -188,8 +188,8 @@ export function AppProvider({ children }) {
     }
   }, [authUser, refreshMine])
 
-  const signUp = useCallback(async ({ name, email, password, remember = true }) => {
-    try { const d = await api('/auth/signup', { method: 'POST', body: { name, email, password, remember } }); setAuthUser(d.user); return { ok: true, user: d.user } }
+  const signUp = useCallback(async ({ name, email, password, remember = true, inviteCode }) => {
+    try { const d = await api('/auth/signup', { method: 'POST', body: { name, email, password, remember, inviteCode } }); setAuthUser(d.user); return { ok: true, user: d.user } }
     catch (e) { return { ok: false, error: e.message } }
   }, [])
 

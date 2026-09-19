@@ -142,16 +142,6 @@ export default function Auth() {
                     onChange={(e) => setName(e.target.value)} />
                 </div>
               )}
-              {isSignup && (
-                <div>
-                  <label className="field-label">twelve access code</label>
-                  <input className="input" placeholder="Code provided by twelve" value={inviteCode}
-                    autoComplete="off" onChange={(e) => setInviteCode(e.target.value)} />
-                  <span className="text-muted" style={{ fontSize: '0.74rem', marginTop: 6, display: 'inline-block' }}>
-                    twelve is invite-only. Enter the access code you were given to create an account.
-                  </span>
-                </div>
-              )}
               <div>
                 <label className="field-label">Email</label>
                 <input className="input" type="email" inputMode="email" placeholder="you@example.com" value={email}
@@ -189,6 +179,17 @@ export default function Auth() {
                   </div>
                 )}
               </div>
+
+              {isSignup && (
+                <div>
+                  <label className="field-label">twelve access code</label>
+                  <input className="input" placeholder="Code provided by twelve" value={inviteCode}
+                    autoComplete="off" onChange={(e) => setInviteCode(e.target.value)} />
+                  <span className="text-muted" style={{ fontSize: '0.74rem', marginTop: 6, display: 'inline-block' }}>
+                    twelve is invite-only. Enter the access code you were given to create an account.
+                  </span>
+                </div>
+              )}
 
               <label className="auth-remember">
                 <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} />

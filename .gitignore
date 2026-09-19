@@ -1,0 +1,13 @@
+node_modules
+dist
+dist-ssr
+*.local
+.DS_Store
+.vite
+
+# Environment & secrets — never commit these
+.env
+.env.local
+
+# Local SQLite database & generated secret (per-machine data)
+server/data/

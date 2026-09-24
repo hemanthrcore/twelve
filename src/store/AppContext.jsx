@@ -17,21 +17,38 @@ const COUNTRY_KEY = 'twelve_country_v1'
 // (data/listings.js) is still bundled in the app as "starter" marketplace
 // inventory and merged with real user listings in Discover.
 // ---------------------------------------------------------------------------
-async function api(path, { method = 'GET', body } = {}) {
-  const res = await fetch('/api' + path, {
-    method,
-    credentials: 'same-origin', // send/receive the session cookie
-    headers: body ? { 'Content-Type': 'application/json' } : undefined,
-    body: body ? JSON.stringify(body) : undefined
-  })
-  let data = null
-  try { data = await res.json() } catch {}
-  if (!res.ok) {
-    const err = new Error((data && data.error) || `Request failed (${res.status})`)
-    err.status = res.status
-    throw err
+async function api(path, { method = 'GET', body, retries = 2 } = {}) {
+  const retryable = method === 'GET' || method === 'HEAD'
+  const maxRetries = retryable ? retries : 0
+  let lastError
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      const res = await fetch('/api' + path, {
+        method,
+        credentials: 'same-origin', // send/receive the session cookie
+        headers: body ? { 'Content-Type': 'application/json' } : undefined,
+        body: body ? JSON.stringify(body) : undefined
+      })
+      let data = null
+      try { data = await res.json() } catch {}
+      if (!res.ok) {
+        const err = new Error((data && data.error) || `Request failed (${res.status})`)
+        err.status = res.status
+        // A cold serverless function or database may briefly return 5xx.
+        if (attempt < maxRetries && res.status >= 500) {
+          await new Promise((resolve) => setTimeout(resolve, 250 * (attempt + 1)))
+          continue
+        }
+        throw err
+      }
+      return data
+    } catch (error) {
+      lastError = error
+      if (attempt >= maxRetries || (error.status && error.status < 500)) throw error
+      await new Promise((resolve) => setTimeout(resolve, 250 * (attempt + 1)))
+    }
   }
-  return data
+  throw lastError
 }
 
 // Live status from timestamps (so tabs/countdowns update without a refetch).
@@ -154,23 +171,26 @@ export function AppProvider({ children }) {
   }, [])
 
   const refreshMine = useCallback(async () => {
-    try {
-      const d = await api('/me/dashboard')
-      setMyListings(d.listings.map(normListing))
-      setOwnerBookings(d.ownerBookings.map(normBooking))
-      setStats(d.stats)
-    } catch {}
-    try {
-      const d = await api('/me/bookings')
-      setMyBookings(d.bookings.map(normBooking))
-    } catch {}
-    refreshWallet()
-  }, [refreshWallet])
+    const [dashboard, bookings, walletData] = await Promise.allSettled([
+      api('/me/dashboard'),
+      api('/me/bookings'),
+      api('/wallet')
+    ])
+    if (dashboard.status === 'fulfilled') {
+      setMyListings(dashboard.value.listings.map(normListing))
+      setOwnerBookings(dashboard.value.ownerBookings.map(normBooking))
+      setStats(dashboard.value.stats)
+    }
+    if (bookings.status === 'fulfilled') setMyBookings(bookings.value.bookings.map(normBooking))
+    if (walletData.status === 'fulfilled') {
+      setWallet({ balance: walletData.value.balance, ledger: walletData.value.ledger || [] })
+    }
+  }, [])
 
   // ---- auth ----
   useEffect(() => {
     let alive = true
-    api('/auth/me')
+    api('/auth/me', { retries: 3 })
       .then((d) => { if (alive) setAuthUser(d.user) })
       .catch(() => { if (alive) setAuthUser(null) })
       .finally(() => { if (alive) setAuthReady(true) })

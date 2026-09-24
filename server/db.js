@@ -191,6 +191,13 @@ export function getJwtSecret() {
   if (process.env.JWT_SECRET && process.env.JWT_SECRET.length >= 16) {
     return process.env.JWT_SECRET
   }
+  // Serverless instances do not share the local filesystem. Derive a stable
+  // fallback from the database secret so a cold start cannot invalidate all
+  // existing cookies. JWT_SECRET should still be configured explicitly.
+  if (process.env.VERCEL && DATABASE_URL) {
+    console.warn('JWT_SECRET is not set; deriving a stable session secret from DATABASE_URL. Set JWT_SECRET for production.')
+    return crypto.createHash('sha256').update(`twelve-session:${DATABASE_URL}`).digest('hex')
+  }
   const file = path.join(DATA_DIR, '.jwt-secret')
   try {
     fs.mkdirSync(DATA_DIR, { recursive: true })

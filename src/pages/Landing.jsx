@@ -54,7 +54,7 @@ export default function Landing() {
         <div className="hero-veil" />
 
         <div className="container hero-inner">
-          <h1 className="display fade-up-2" style={{ marginTop: 22 }}>
+          <h1 className="display fade-up-2" style={{ marginTop: 70 }}>
             Access more.<br /><span className="gradient-text-animated">Subscribe less.</span>
           </h1>
           <p className="fade-up-3 lead" style={{ maxWidth: 660, margin: '22px auto 0' }}>

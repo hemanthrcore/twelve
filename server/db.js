@@ -168,6 +168,15 @@ export const SCHEMA_SQL = `
     created_at    BIGINT  NOT NULL
   );
   CREATE INDEX IF NOT EXISTS idx_ledger_user ON wallet_ledger (user_id);
+
+  -- The API is the only data access layer. Enable RLS so direct public-schema
+  -- access is denied by default while the server's table-owning role continues
+  -- to run the authenticated application queries.
+  ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+  ALTER TABLE listings ENABLE ROW LEVEL SECURITY;
+  ALTER TABLE bookings ENABLE ROW LEVEL SECURITY;
+  ALTER TABLE messages ENABLE ROW LEVEL SECURITY;
+  ALTER TABLE wallet_ledger ENABLE ROW LEVEL SECURITY;
 `
 
 // Create the tables if they don't exist. Idempotent and safe to call repeatedly;

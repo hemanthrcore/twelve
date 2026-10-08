@@ -18,10 +18,7 @@ const TOC = [
   { id: 'wallet', label: 'The twelve Wallet', icon: 'wallet' },
   { id: 'payments', label: 'Payment methods', icon: 'card' },
   { id: 'lifecycle', label: 'Booking lifecycle & settlement', icon: 'refresh' },
-  { id: 'pricing', label: 'Pricing & currency', icon: 'globe' },
   { id: 'safety', label: 'Safety & privacy', icon: 'shieldCheck' },
-  { id: 'demo', label: 'Demo & admin', icon: 'sparkle' },
-  { id: 'troubleshooting', label: 'Troubleshooting', icon: 'gear' },
   { id: 'faq', label: 'FAQ', icon: 'bell' },
   { id: 'glossary', label: 'Glossary', icon: 'book' }
 ]
@@ -123,8 +120,8 @@ export default function Manual() {
           </h1>
           <p className="text-secondary" style={{ marginTop: 18, fontSize: '1.12rem', maxWidth: 660, marginInline: 'auto' }}>
             A full walkthrough of every part of twelve — booking temporary access, listing your own
-            subscriptions, the Wallet, payment methods, the setup handshake, settlement, pricing,
-            safety, and troubleshooting. Read top-to-bottom, or jump to a section.
+            subscriptions, the Wallet, payment methods, the setup handshake, settlement, and safety.
+            Read top-to-bottom, or jump to a section.
           </p>
         </div>
       </section>
@@ -515,38 +512,6 @@ export default function Manual() {
 
         <hr className="divider" style={{ margin: '36px 0' }} />
 
-        {/* ── Pricing ──────────────────────────────────────────── */}
-        <Section id="pricing" icon="globe" eyebrow="How prices work" title="Pricing & currency">
-          <div className="card pad-lg">
-            <Define term="One canonical price">
-              Every price is derived from the provider's real <strong>monthly plan price in India</strong>
-              (in ₹) — the single source of truth, the same for everyone everywhere. twelve does not
-              re-price by the buyer's country.
-            </Define>
-            <Define term="USD internally">
-              That India value is expressed in <strong>USD</strong> at a reference rate (₹83/$) so the
-              Wallet, ledger and settlement all use one unit.
-            </Define>
-            <Define term="Local display currency">
-              The country selector converts the USD value into a display currency (₹, $, £, €, ¥ and
-              more). It only changes what you see, never what is stored. The default is USD.
-            </Define>
-            <Define term="The rental curve">
-              A booking's buyer price follows a convex curve — roughly
-              {' '}<span className="mono">monthly × (hours ÷ 720)^0.55</span>. Short bookings carry a
-              convenience premium; multi-day bookings taper toward — but always stay below — the full
-              monthly plan. A small floor keeps every booking commercially meaningful, and each step
-              costs more than the one before it.
-            </Define>
-          </div>
-          <Callout icon="info" title="Why longer looks cheaper per hour">
-            Because the curve's exponent is below 1, a 7-day window costs more in total than a 3-hour
-            one, but far less per hour — rewarding longer commitments, just like real-world rentals.
-          </Callout>
-        </Section>
-
-        <hr className="divider" style={{ margin: '36px 0' }} />
-
         {/* ── Safety ───────────────────────────────────────────── */}
         <Section id="safety" icon="shieldCheck" eyebrow="Built-in by design" title="Safety & privacy">
           <p className="text-secondary" style={{ lineHeight: 1.7, marginBottom: 20 }}>
@@ -560,65 +525,6 @@ export default function Manual() {
             <Define term="No copyrighted assets">Every logo is an original CSS/SVG wordmark; every “poster” is generated from gradients. No copyrighted logos, posters or model outputs are reproduced.</Define>
           </div>
           <Disclaimer style={{ marginTop: 22 }} />
-        </Section>
-
-        <hr className="divider" style={{ margin: '36px 0' }} />
-
-        {/* ── Demo & admin ─────────────────────────────────────── */}
-        <Section id="demo" icon="sparkle" eyebrow="Running the prototype" title="Demo & admin">
-          <div className="card pad-lg">
-            <Define term="Starter credit">
-              New accounts begin with <strong>₹100 (~$1.20)</strong> of demo Wallet credit. Top up any
-              time (up to $1000 per top-up) on the Wallet page.
-            </Define>
-            <Define term="Reset demo">
-              Use <em>Reset demo</em> on the Dashboard or Profile to restore the in-app seed data
-              between run-throughs — without deleting accounts.
-            </Define>
-            <Define term="Reset the database (developers)">
-              To wipe <strong>all</strong> accounts, listings and bookings, stop the server and run
-              {' '}<span className="mono">npm run reset-db</span>. A fresh, empty database is created on
-              the next start. (Add <span className="mono">-- --yes</span> to skip the prompt.)
-            </Define>
-            <Define term="Google Sign-In (developers)">
-              Optional. Add a free Google OAuth Web Client ID to both{' '}
-              <span className="mono">GOOGLE_CLIENT_ID</span> and{' '}
-              <span className="mono">VITE_GOOGLE_CLIENT_ID</span> in <span className="mono">.env</span>,
-              then restart. Email/password works with no configuration.
-            </Define>
-            <Define term="Simulated providers">
-              The streaming, course and AI-chat screens are simulations. AI responses are generic
-              placeholders; nothing connects to a real provider account.
-            </Define>
-          </div>
-        </Section>
-
-        <hr className="divider" style={{ margin: '36px 0' }} />
-
-        {/* ── Troubleshooting ──────────────────────────────────── */}
-        <Section id="troubleshooting" icon="gear" eyebrow="If something looks off" title="Troubleshooting">
-          <div className="card pad-lg">
-            <Define term="My dashboard is empty">
-              Dashboards are per-user — you only see your own listings, bookings and earnings. Publish
-              a listing or make a booking and it will populate.
-            </Define>
-            <Define term="My booking never went active">
-              Both sides must confirm within the 10-minute window. If either side doesn't, the booking
-              times out and your held payment is refunded. Check <em>My bookings</em> for the refund.
-            </Define>
-            <Define term="“Insufficient balance” at checkout">
-              Your Wallet balance is below the booking price. Top up on the Wallet page, or use
-              <em> Pay another way</em> to pick a different (simulated) method.
-            </Define>
-            <Define term="Prices look different from a friend's">
-              Prices are identical everywhere — only the <em>display</em> currency differs. Check the
-              display currency in your account menu.
-            </Define>
-            <Define term="Google button doesn't appear">
-              Google Sign-In needs a configured OAuth Client ID. Without it, use email/password — it
-              always works.
-            </Define>
-          </div>
         </Section>
 
         <hr className="divider" style={{ margin: '36px 0' }} />
@@ -646,7 +552,7 @@ export default function Manual() {
             </Define>
             <Define term="Is Apple / other sign-in available?">
               Email/password and Google Sign-In are supported. Other SSO providers need paid developer
-              accounts and an HTTPS domain, so they're left out of this local prototype.
+              accounts, so they're left out of this local prototype.
             </Define>
           </div>
         </Section>

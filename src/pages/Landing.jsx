@@ -59,7 +59,10 @@ export default function Landing() {
           </h1>
           <p className="fade-up-3 lead" style={{ maxWidth: 660, margin: '22px auto 0' }}>
             Temporary access to entertainment, education and AI subscriptions —
-            without sharing passwords. Pay by the hour, anywhere in the world.
+            without sharing passwords. Explore the simulated marketplace and booking flow.
+          </p>
+          <p className="fade-up-3 disclaimer" style={{ maxWidth: 620, margin: '14px auto 0' }}>
+            twelve is an independent prototype, not an official provider service. Listings, access, balances, and payments are demonstrations.
           </p>
           <div className="fade-up-4 row" style={{ gap: 12, marginTop: 34, justifyContent: 'center', flexWrap: 'wrap' }}>
             <button className="btn btn-white btn-lg" onClick={() => navigate('/discover')}>Get started <Icon name="arrowRight" size={17} /></button>

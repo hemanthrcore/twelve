@@ -13,7 +13,7 @@ export default function Success() {
   const { getBooking, loadBooking, toast } = useApp()
   const booking = getBooking(bookingId)
 
-  useEffect(() => { toast('Payment successful', 'success') }, []) // eslint-disable-line
+  useEffect(() => { toast('Demo booking confirmed', 'success') }, []) // eslint-disable-line
   useEffect(() => { if (!booking) loadBooking(bookingId) }, [booking, bookingId, loadBooking])
 
   if (!booking) return null
@@ -33,8 +33,8 @@ export default function Success() {
               <path d="M20 6 9 17l-5-5" />
             </svg>
           </div>
-          <h1 style={{ fontSize: '2rem', marginTop: 26 }}>Payment successful</h1>
-          <p className="text-secondary" style={{ marginTop: 10, fontSize: '1.05rem' }}>Your temporary access is ready.</p>
+          <h1 style={{ fontSize: '2rem', marginTop: 26 }}>Demo booking confirmed</h1>
+          <p className="text-secondary" style={{ marginTop: 10, fontSize: '1.05rem' }}>No payment was processed. This simulated access state is ready.</p>
 
           <div className="card-elevated pad" style={{ marginTop: 28, textAlign: 'left' }}>
             <div className="row" style={{ gap: 14 }}>

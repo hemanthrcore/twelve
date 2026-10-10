@@ -18,8 +18,6 @@ export default function AccessScreen() {
   const [confirmReport, setConfirmReport] = useState(false)
   const [reportReason, setReportReason] = useState('')
   const [busy, setBusy] = useState(false)
-  const [showCreds, setShowCreds] = useState(false)
-  const [revealed, setRevealed] = useState(false)
 
   useEffect(() => { if (!booking) loadBooking(bookingId) }, [booking, bookingId, loadBooking])
 
@@ -40,12 +38,6 @@ export default function AccessScreen() {
   const isOwner = authUser && booking.ownerId === authUser.id
   const disputed = status === 'disputed'
   const finished = status === 'completed' || disputed
-  const creds = buildCredentials(booking, p)
-
-  const copy = (text, label) => {
-    try { navigator.clipboard?.writeText(text); toast(`${label} copied`, 'success') } catch {}
-  }
-
   const doReport = async () => {
     setBusy(true)
     try {
@@ -123,23 +115,15 @@ export default function AccessScreen() {
               </div>
             )}
 
-            {/* BUYER (receiver) — credentials, only when live */}
-            {!isOwner && !finished && showCreds && (
+            {/* BUYER (receiver) — simulated state, never provider credentials */}
+            {!isOwner && !finished && (
               <div className="card-elevated pad fade-in" style={{ marginTop: 16, textAlign: 'left' }}>
-                <div className="between" style={{ marginBottom: 12 }}>
-                  <div className="row" style={{ gap: 8 }}>
-                    <Icon name="lock" size={15} style={{ color: 'var(--accent)' }} />
-                    <h4 style={{ fontSize: '0.98rem' }}>Access credentials</h4>
-                  </div>
-                  <button className="link-accent" style={{ fontSize: '0.8rem' }} onClick={() => setRevealed((r) => !r)}>
-                    {revealed ? 'Hide' : 'Reveal'}
-                  </button>
+                <div className="row" style={{ gap: 8, marginBottom: 8 }}>
+                  <Icon name="shieldCheck" size={15} style={{ color: 'var(--accent)' }} />
+                  <h4 style={{ fontSize: '0.98rem' }}>Simulated access preview</h4>
                 </div>
-                <CredRow label="Profile" value={creds.profile} onCopy={() => copy(creds.profile, 'Profile')} />
-                <CredRow label="Sign-in email" value={creds.email} onCopy={() => copy(creds.email, 'Email')} />
-                <CredRow label="One-time access code" value={creds.code} secret hidden={!revealed} onCopy={() => copy(creds.code, 'Code')} />
                 <p className="disclaimer" style={{ marginTop: 10, fontSize: '0.72rem' }}>
-                  Simulated authorization for this prototype — no real provider passwords or OTPs are collected or shared. Valid only until this booking expires.
+                  This screen demonstrates the booking timer only. twelve does not sign you into {p.name}, issue provider credentials, or connect to provider systems.
                 </p>
               </div>
             )}
@@ -173,8 +157,8 @@ export default function AccessScreen() {
                 </button>
               ) : (
                 <>
-                  <button className="btn btn-white btn-lg btn-block" onClick={() => { setShowCreds((s) => !s); setRevealed(false) }}>
-                    <Icon name={showCreds ? 'eye' : 'lock'} size={16} /> {showCreds ? 'Hide credentials' : 'Show credentials'}
+                  <button className="btn btn-white btn-lg btn-block" onClick={() => navigate('/bookings')}>
+                    <Icon name="ticket" size={16} /> View simulated booking
                   </button>
                   <div className="row" style={{ gap: 10 }}>
                     <button className="btn btn-ghost btn-block" onClick={() => navigate('/bookings')}>Manage Booking</button>
@@ -234,37 +218,6 @@ export default function AccessScreen() {
           onChange={(e) => setReportReason(e.target.value)}
         />
       </Modal>
-    </div>
-  )
-}
-
-// Deterministic, simulated session credentials for the booking (no real secrets).
-function buildCredentials(booking, p) {
-  let h = 0
-  const s = 'tw' + booking.id + (booking.provider || '')
-  for (let i = 0; i < s.length; i++) h = (h << 5) - h + s.charCodeAt(i)
-  const n = Math.abs(h)
-  const tag = (n % 9000 + 1000)
-  const code = String(n % 900000 + 100000)
-  const service = (p?.name || booking.provider || 'service').toLowerCase().replace(/[^a-z]/g, '').slice(0, 8) || 'access'
-  return {
-    profile: `twelve Guest ${tag}`,
-    email: `guest${tag}@${service}.twelve-access.app`,
-    code
-  }
-}
-
-function CredRow({ label, value, secret, hidden, onCopy }) {
-  const shown = secret && hidden ? '••••••' : value
-  return (
-    <div className="between" style={{ gap: 10, padding: '7px 0' }}>
-      <span className="text-muted" style={{ fontSize: '0.82rem', flex: 'none' }}>{label}</span>
-      <span className="row" style={{ gap: 8, minWidth: 0 }}>
-        <span className="mono" style={{ fontSize: '0.86rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{shown}</span>
-        <button className="icon-btn" style={{ width: 30, height: 30 }} onClick={onCopy} aria-label={`Copy ${label}`} title="Copy">
-          <Icon name="link" size={14} />
-        </button>
-      </span>
     </div>
   )
 }

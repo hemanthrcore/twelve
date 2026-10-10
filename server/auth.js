@@ -48,7 +48,7 @@ function issueSession(res, user, remember) {
   res.cookie(COOKIE, token, {
     httpOnly: true,
     sameSite: 'lax',
-    secure: process.env.COOKIE_SECURE === 'true', // set true when serving over HTTPS
+    secure: process.env.COOKIE_SECURE === 'true' || process.env.VERCEL === '1' || process.env.NODE_ENV === 'production',
     path: '/',
     // "remember me" → persistent cookie; otherwise a session cookie (cleared on browser close)
     ...(remember ? { maxAge: maxAgeDays * 24 * 60 * 60 * 1000 } : {})

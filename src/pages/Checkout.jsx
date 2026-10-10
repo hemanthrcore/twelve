@@ -65,19 +65,18 @@ export default function Checkout() {
 
           <div className="between wrap" style={{ marginBottom: 26, gap: 12 }}>
             <div>
-              <h1 style={{ fontSize: 'clamp(1.7rem,3vw,2.3rem)', marginBottom: 6 }}>Secure checkout</h1>
-              <p className="text-secondary">Complete your booking. Payments are encrypted and processed securely.</p>
+              <h1 style={{ fontSize: 'clamp(1.7rem,3vw,2.3rem)', marginBottom: 6 }}>Demo checkout</h1>
+              <p className="text-secondary">Review a simulated booking. No real payment is processed.</p>
             </div>
-            <span className="pill" style={{ gap: 7 }}><Icon name="shieldCheck" size={14} style={{ color: 'var(--green)' }} /> 256-bit encryption</span>
+            <span className="pill" style={{ gap: 7 }}><Icon name="sparkle" size={14} style={{ color: 'var(--accent)' }} /> Prototype only</span>
           </div>
 
           <div className="grid" style={{ gridTemplateColumns: '1.15fr 0.85fr', gap: 28, alignItems: 'start' }}>
             {/* ---------------- LEFT: payment ---------------- */}
             <div>
               <div className="card pad-lg" style={{ marginBottom: 18 }}>
-                <SectionLabel n="1" title="Contact" />
-                <label className="field-label">Email for receipt</label>
-                <input className="input" defaultValue="vasishta.offical@gmail.com" inputMode="email" />
+                <SectionLabel n="1" title="Booking details" />
+                <p className="text-secondary" style={{ fontSize: '0.9rem' }}>This demo uses your signed-in twelve account. No receipt or payment details are sent to a payment provider.</p>
                 <div className="row" style={{ gap: 7, marginTop: 12 }}>
                   <Icon name="location" size={14} className="text-muted" />
                   <span className="text-muted" style={{ fontSize: '0.82rem' }}>Billing region: <strong style={{ color: 'var(--text-secondary)' }}>{countryName}</strong> · detected automatically</span>
@@ -139,7 +138,7 @@ export default function Checkout() {
                     {stage === 'processing' ? <><Spinner /> Processing…</>
                       : stage === 'done' ? <><Icon name="check" size={18} /> Confirmed</>
                       : method === 'wallet' ? <><Icon name="lock" size={16} /> Hold {inr(total)}</>
-                      : <><Icon name="lock" size={16} /> Pay {inr(total)}</>}
+                      : <><Icon name="sparkle" size={16} /> Simulate booking</>}
                   </button>
                   <p className="text-muted text-center" style={{ fontSize: '0.74rem', marginTop: 12 }}>
                     {method === 'wallet'
@@ -150,8 +149,8 @@ export default function Checkout() {
               </div>
 
               <div className="row" style={{ gap: 16, justifyContent: 'center', marginTop: 16 }}>
-                <span className="text-muted row" style={{ gap: 5, fontSize: '0.74rem' }}><Icon name="shieldCheck" size={13} /> PCI-DSS</span>
-                <span className="text-muted row" style={{ gap: 5, fontSize: '0.74rem' }}><Icon name="lock" size={13} /> Encrypted</span>
+                <span className="text-muted row" style={{ gap: 5, fontSize: '0.74rem' }}><Icon name="shieldCheck" size={13} /> Simulation</span>
+                <span className="text-muted row" style={{ gap: 5, fontSize: '0.74rem' }}><Icon name="lock" size={13} /> No financial data</span>
                 <span className="text-muted row" style={{ gap: 5, fontSize: '0.74rem' }}><Icon name="clock" size={13} /> Auto-expiry</span>
               </div>
             </div>
